@@ -12,6 +12,8 @@ cd "$(dirname "$0")"
 
 export CADDY_L4_REPO=${1:-https://github.com/mholt/caddy-l4}
 export CADDY_L4_REF=${2:-master}
+CADDY_L4_COMMIT=$(git ls-remote "$CADDY_L4_REPO" "refs/heads/$CADDY_L4_REF" | cut -f1)
+export CADDY_L4_COMMIT=${CADDY_L4_COMMIT:-unknown}
 export MATCHER=${MATCHER:-none}
 export HANDSHAKE_TIMEOUT=${HANDSHAKE_TIMEOUT:-}
 export HOLD=${HOLD:-30}

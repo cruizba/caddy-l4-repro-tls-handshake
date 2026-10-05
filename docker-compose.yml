@@ -6,6 +6,7 @@ services:
       args:
         CADDY_L4_REPO: ${CADDY_L4_REPO:-https://github.com/mholt/caddy-l4}
         CADDY_L4_REF: ${CADDY_L4_REF:-master}
+        CADDY_L4_COMMIT: ${CADDY_L4_COMMIT:-unknown}
     environment:
       MATCHER: ${MATCHER:-none}
       HANDSHAKE_TIMEOUT: ${HANDSHAKE_TIMEOUT:-}

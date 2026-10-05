@@ -31,7 +31,7 @@ Requirements: Docker with Compose. Caddy is built from source in the image.
 ```sh
 ./run.sh                                  # upstream master, route without matchers
 MATCHER=sni ./run.sh                      # upstream master, route matched by "tls sni localhost"
-HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2
+HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout
 ```
 
 `HOLD` (default 30) is how many seconds each client waits for Caddy to close.
@@ -84,46 +84,44 @@ caddy-l4: https://github.com/mholt/caddy-l4 master 42db569 proxy_protocol: Adjus
 ```
 
 The branch with `handshake_timeout`, set to 5s, route without matchers
-(`HOLD=20 HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2`):
+(`HOLD=20 HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout`):
 
 ```
-caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2 149daec docs: Document the tls handshake_timeout option | route matcher: none | handshake_timeout: 5s
-19:20:16 clients: connecting to caddy:8443, waiting up to 20s each
-19:20:21 no-clienthello           closed by Caddy after  5.0s
-19:20:21 stall-after-clienthello  closed by Caddy after  5.0s
-19:20:21 partial-clienthello      closed by Caddy after  5.0s
-19:20:36 complete-handshake       STILL OPEN after 20.0s
-19:20:12 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: none
-19:20:17 probe: goroutines in TLS handshake=3 | Caddy sockets on :8443: ESTAB=4
-19:20:22 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
-19:20:27 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
-19:20:32 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
-19:20:37 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: TIME-WAIT=3
-19:20:42 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: TIME-WAIT=3
+caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout 149daec docs: Document the tls handshake_timeout option | route matcher: none | handshake_timeout: 5s
+19:32:24 clients: connecting to caddy:8443, waiting up to 20s each
+19:32:29 stall-after-clienthello  closed by Caddy after  5.0s
+19:32:29 no-clienthello           closed by Caddy after  5.0s
+19:32:29 partial-clienthello      closed by Caddy after  5.0s
+19:32:44 complete-handshake       STILL OPEN after 20.1s
+19:32:22 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: none
+19:32:27 probe: goroutines in TLS handshake=3 | Caddy sockets on :8443: ESTAB=4
+19:32:32 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
+19:32:37 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
+19:32:43 probe: goroutines in TLS handshake=0 | Caddy sockets on :8443: ESTAB=1 TIME-WAIT=3
 ```
 
 The same branch, route matched by `tls sni`
-(`HOLD=20 MATCHER=sni HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2`):
+(`HOLD=20 MATCHER=sni HANDSHAKE_TIMEOUT=5s ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout`):
 
 ```
-caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2 149daec docs: Document the tls handshake_timeout option | route matcher: sni | handshake_timeout: 5s
-19:21:26 clients: connecting to caddy:8443, waiting up to 20s each
-19:21:29 partial-clienthello      closed by Caddy after  3.0s
-19:21:29 no-clienthello           closed by Caddy after  3.0s
-19:21:31 stall-after-clienthello  closed by Caddy after  5.0s
-19:21:46 complete-handshake       STILL OPEN after 20.0s
+caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout 149daec docs: Document the tls handshake_timeout option | route matcher: sni | handshake_timeout: 5s
+19:33:00 clients: connecting to caddy:8443, waiting up to 20s each
+19:33:03 partial-clienthello      closed by Caddy after  3.0s
+19:33:03 no-clienthello           closed by Caddy after  3.0s
+19:33:05 stall-after-clienthello  closed by Caddy after  5.0s
+19:33:20 complete-handshake       STILL OPEN after 20.1s
 ```
 
 Without `handshake_timeout`, the branch behaves like upstream `master`
-(`HOLD=20 ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2`):
+(`HOLD=20 ./run.sh https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout`):
 
 ```
-caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout-v2 149daec docs: Document the tls handshake_timeout option | route matcher: none | handshake_timeout: not set
-19:21:54 clients: connecting to caddy:8443, waiting up to 20s each
-19:22:14 no-clienthello           STILL OPEN after 20.0s
-19:22:14 partial-clienthello      STILL OPEN after 20.0s
-19:22:14 stall-after-clienthello  STILL OPEN after 20.0s
-19:22:14 complete-handshake       STILL OPEN after 20.0s
+caddy-l4: https://github.com/cruizba/caddy-l4 fix/tls-handshake-timeout 149daec docs: Document the tls handshake_timeout option | route matcher: none | handshake_timeout: not set
+19:33:28 clients: connecting to caddy:8443, waiting up to 20s each
+19:33:48 no-clienthello           STILL OPEN after 20.0s
+19:33:48 partial-clienthello      STILL OPEN after 20.0s
+19:33:48 stall-after-clienthello  STILL OPEN after 20.0s
+19:33:48 complete-handshake       STILL OPEN after 20.0s
 ```
 
 In every run, the `complete-handshake` client stays open: `handshake_timeout`
