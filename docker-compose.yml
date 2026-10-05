@@ -1,0 +1,27 @@
+services:
+  # Caddy with a layer4 server on :8443 that terminates TLS and echoes.
+  caddy:
+    build:
+      context: ./caddy
+      args:
+        CADDY_L4_REPO: ${CADDY_L4_REPO:-https://github.com/mholt/caddy-l4}
+        CADDY_L4_REF: ${CADDY_L4_REF:-master}
+    environment:
+      MATCHER: ${MATCHER:-none}
+      HANDSHAKE_TIMEOUT: ${HANDSHAKE_TIMEOUT:-}
+
+  # Watches Caddy from inside its network namespace: l4tls goroutines and sockets.
+  probe:
+    image: nicolaka/netshoot:latest
+    network_mode: service:caddy
+    volumes: ["./probe.sh:/probe.sh:ro"]
+    command: ["sh", "/probe.sh"]
+    depends_on: [caddy]
+
+  # Three clients that never finish the handshake and one that does.
+  client:
+    build: ./client
+    environment:
+      HOLD: ${HOLD:-30}
+    depends_on: [caddy]
+    profiles: [client]
